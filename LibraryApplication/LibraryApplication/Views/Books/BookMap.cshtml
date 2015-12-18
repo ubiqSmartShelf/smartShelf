@@ -1,0 +1,75 @@
+﻿@model IEnumerable<LibraryApplication.Models.tbl_Books>
+
+@{
+    ViewBag.Title = "BookMap";
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BookMap</title>
+    <script type=" text/javascript">
+        function hide() {
+            var div = document.getElementById('shelf');
+            div.style.display = 'none';
+        }
+
+    </script>
+
+    <script type=" text/javascript">
+        function show() {
+            var div = document.getElementById('shelf');
+            div.style.display = 'block';
+        }
+
+    </script>
+</head>
+
+<body>
+    <h2>The bookmap</h2>
+
+
+  
+
+    @using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+    <p>
+        Search for a book: @Html.TextBox("bookString") @ViewBag.book<br>
+    </p>
+    
+
+    <input type="submit" value="Search" />
+
+    <div style="position: relative; left: 0; top: 80px;">
+      
+        <img src=@ViewData["pic"] style=" position: relative; top:0px; left: 10px;" />
+    </div>
+
+    <div id="shelf" style="position: absolute; left: 900px; top: 100px; display:none;">
+        <img src=http://i.imgur.com/GUuPPyT.png style=" position: relative; top: 150px; left: 50px;" />
+        <img src=@ViewData["book1"] style=" position: absolute; top: 150px; left: 50px;" />
+        <img src=@ViewData["book2"] style=" position: absolute; top: 150px; left: 250px;" />
+
+        <img src=@ViewData["book3"] style=" position: absolute; top: 150px; left: 50px;" />
+
+    </div>
+}
+    @if (ViewData["show"].Equals(true)) {
+
+    <script type=" text/javascript">
+        show();
+    </script>
+
+            }
+    @if (ViewData["show"].Equals(false)) {
+    <script type=" text/javascript">
+        hide();
+    </script>
+            }
+   
+
+
+</body>
+</html>

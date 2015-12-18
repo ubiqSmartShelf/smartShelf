@@ -1,0 +1,451 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.IO;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+using LibraryApplication.Models;
+using System.Data.Entity;
+using System.Collections;
+using System.Data.OleDb;
+<<<<<<< HEAD
+using System.Diagnostics;
+
+=======
+using LibraryApplication.SensorStuff;
+>>>>>>> a72b6c2a2c27518195e8dd29c49c58e4c97342d4
+
+namespace LibraryApplication.App_Code
+{
+    public class DatabaseConnection
+    {
+
+        SqlConnection sqlCn = new SqlConnection();
+
+        public int setShelf(int newint, String bookName)
+        {
+
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+            string sqlString = "UPDATE tbl_Books SET bo_shelf = @setshelf WHERE bo_Title = @bookName";
+            //string sqlString = "UPDATE tbl_Books SET bo_isin = 1 WHERE bo_Title = 'Thebook'";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@setshelf", SqlDbType.BigInt);
+            myCmd.Parameters.Add("@bookName", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                myCmd.Parameters["@setshelf"].Value = newint;
+                myCmd.Parameters["@bookName"].Value = bookName;
+                rowsaffected = myCmd.ExecuteNonQuery();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return rowsaffected;
+
+        }
+
+        public int setShelfByTag(String bookTag, String shelfTag)
+        {
+
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+            string sqlString = "UPDATE tbl_Books SET CurrentShelf = @shelfTag WHERE TagId = @bookTag";
+            //string sqlString = "UPDATE tbl_Books SET bo_isin = 1 WHERE bo_Title = 'Thebook'";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@shelfTag", SqlDbType.NChar);
+            myCmd.Parameters.Add("@bookTag", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                myCmd.Parameters["@shelfTag"].Value = shelfTag;
+                myCmd.Parameters["@bookTag"].Value = bookTag;
+                rowsaffected = myCmd.ExecuteNonQuery();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return rowsaffected;
+
+        }
+
+        public int getShelfOfBook(String bookName)
+        {
+            int bookShelf = 0;
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+            string sqlString = "SELECT bo_shelf FROM tbl_Books WHERE bo_Title = @bookName";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@bookName", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                myCmd.Parameters["@bookName"].Value = bookName;
+
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+
+                while (myReader.Read())
+                {
+                    bookShelf = myReader.GetInt32(0);
+                }
+
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return bookShelf;
+
+        }
+
+
+        public List<String> getPersonBooks(int cardId)
+        {
+            List<String> list = new List<String>();
+            int rowsaffected = 0;
+
+            string sqlString = "SELECT bo_Title FROM tbl_Books WHERE bo_cardId = @cardId";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@cardId", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+
+                // Läser data med hjälp av ett datareaderobjekt
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+
+                while (myReader.Read())
+                {
+                    list.Add(myReader.GetString(0));
+
+                }
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+
+
+            return list;
+        }
+
+  
+
+
+        public int setBookPerson(String personName, int cardId, String bookName)
+        {
+
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+            string sqlString = "UPDATE tbl_Books SET bo_person = @setperson, bo_cardId = @setcardid WHERE bo_Title = @bookName";
+            //string sqlString = "UPDATE tbl_Books SET bo_isin = 1 WHERE bo_Title = 'Thebook'";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@setperson", SqlDbType.BigInt);
+            myCmd.Parameters.Add("@setcardid", SqlDbType.BigInt);
+            myCmd.Parameters.Add("@bookName", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                myCmd.Parameters["@setperson"].Value = personName;
+                myCmd.Parameters["@setcardid"].Value = cardId;
+                myCmd.Parameters["@bookName"].Value = bookName;
+                rowsaffected = myCmd.ExecuteNonQuery();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return rowsaffected;
+
+        }
+
+
+        public String getPersonByTag(String tag)
+        {
+
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+            String name = null;
+
+            string sqlString = "SELECT Name FROM tbl_Person WHERE PersonTagId = @tag";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@tag", SqlDbType.NChar);
+
+            try
+            {
+                sqlCn.Open();
+
+                // Läser data med hjälp av ett datareaderobjekt
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+
+
+                name = myReader.GetString(0);
+
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return name;
+
+        }
+
+        public Book getBookByTag(String tag)
+        {
+
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+            Book book = null;
+
+            string sqlString = "SELECT * FROM tbl_Books WHERE = @tag";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@tag", SqlDbType.NChar);
+
+            try
+            {
+                sqlCn.Open();
+                // Läser data med hjälp av ett datareaderobjekt
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+
+                book = new Book();
+                book.Title = myReader["Title"].ToString();
+                book.Author = myReader["Author"].ToString();
+                book.CorrectShelf = myReader["CorrectShelf"].ToString();
+                book.CurrentShelf = myReader["CurrentShelf"].ToString();
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+            return book;
+
+        }
+
+  /*      public List getAllInBook()
+        {
+            List list = new List();
+            int rowsaffected = 0;
+
+            string sqlString = "SELECT bo_Title FROM tbl_Books WHERE bo_shelf NOT IN (0)";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@cardId", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+
+                // Läser data med hjälp av ett datareaderobjekt
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+
+                while (myReader.Read())
+                {
+                    list.Add(myReader.GetString(0));
+
+                }
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.StackTrace);
+
+            }
+
+
+            return list;
+        }
+        */
+
+
+        public List<List<String>> getAllInBookShelf()
+        {
+            List<List<String>> list = new List<List<String>>();
+            List<String> bookinfo;
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+           // string sqlString = "SELECT Title, CorrectShelf FROM tbl_Books";
+            string sqlString = "SELECT * FROM tbl_Books";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+           // myCmd.Parameters.Add("@cardId", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                Debug.WriteLine("sqlopen");
+                // Läser data med hjälp av ett datareaderobjekt
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+                Debug.WriteLine("myreader");
+                
+                while (myReader.Read())
+                {
+                    bookinfo = new List<String>();
+
+
+                    string tempstring = myReader.GetString(1);
+                    string tempint = myReader.GetString(2);
+
+                    bookinfo.Add(tempstring);
+                    bookinfo.Add(tempint);
+                    Debug.WriteLine("In getall");
+                    Debug.WriteLine(tempstring);
+                    Console.WriteLine("{0}\t{1}", tempstring,
+                    tempint);
+
+                    list.Add(bookinfo);
+                }
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("exe");
+                Console.WriteLine(e.StackTrace);
+
+            }
+
+
+            return list;
+        }
+
+        public List<String> getBookByName(string bookName)
+        {
+            List<String> bookinfo;
+            bookinfo = new List<String>();
+            int rowsaffected = 0;
+            sqlCn.ConnectionString = ConfigurationManager.ConnectionStrings["sqlConnectionDatabase"].ConnectionString;
+
+            // string sqlString = "SELECT Title, CorrectShelf FROM tbl_Books";
+            string sqlString = "SELECT CurrentShelf, CorrectShelf FROM tbl_Books WHERE Title = @bookName";
+            SqlCommand myCmd = new SqlCommand(sqlString, sqlCn);
+            myCmd.Parameters.Add("@bookName", SqlDbType.NChar);
+
+
+            try
+            {
+                sqlCn.Open();
+                myCmd.Parameters["@bookName"].Value = bookName;
+                SqlDataReader myReader;
+                myReader = myCmd.ExecuteReader();
+                Debug.WriteLine("before read");
+                
+                while (myReader.Read())
+                {
+                    String tempstring;
+                    String tempstring1;
+
+                    Debug.WriteLine("after read");
+                    try
+                    {
+                        tempstring = myReader.GetString(0);
+                        
+                    }
+                    catch(Exception e)
+                    {
+                        tempstring = "-1";
+
+                    }
+                    Debug.WriteLine("andra strängen");
+
+                        tempstring1 = myReader.GetString(1);
+
+                   
+                    
+                    Debug.WriteLine(tempstring);
+                    Debug.WriteLine(tempstring1);
+                    bookinfo.Add(tempstring);
+                    bookinfo.Add(tempstring1);
+                }
+
+                myReader.Close();
+
+                sqlCn.Close();
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("exe");
+                Console.WriteLine(e.StackTrace);
+
+            }
+
+
+            return bookinfo;
+        }
+
+
+    }
+}

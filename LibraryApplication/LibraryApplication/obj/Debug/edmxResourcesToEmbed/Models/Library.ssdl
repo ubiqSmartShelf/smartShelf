@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="tbl_Books">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Title" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="Author" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="CurrentShelf" Type="nvarchar" MaxLength="30" />
+    <Property Name="CorrectShelf" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="TagId" Type="nvarchar" MaxLength="30" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tbl_Borrowing">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BookTag" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="PersonTag" Type="varchar" MaxLength="30" Nullable="false" />
+    <Property Name="ReturnDate" Type="int" />
+  </EntityType>
+  <EntityType Name="tbl_Person">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="30" Nullable="false" />
+    <Property Name="PersonTagId" Type="varchar" MaxLength="30" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6035: The relationship 'FK1_Tbl_PersonTag' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FK1_Tbl_PersonTag" />-->
+  <!--Errors Found During Generation:
+warning 6035: The relationship 'FK2_Tbl_BookTag' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FK2_Tbl_BookTag" />-->
+  <EntityContainer Name="DatabaseModelStoreContainer">
+    <EntitySet Name="tbl_Books" EntityType="Self.tbl_Books" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_Borrowing" EntityType="Self.tbl_Borrowing" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_Person" EntityType="Self.tbl_Person" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

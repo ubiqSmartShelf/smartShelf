@@ -1,0 +1,204 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using LibraryApplication.Models;
+using LibraryApplication.App_Code;
+using System.Threading;
+using System.Diagnostics;
+using System.Collections;
+
+namespace LibraryApplication.Controllers
+{
+    public class BooksController : Controller
+    {
+        private LibraryEntities db = new LibraryEntities();
+
+        // GET: /Books/
+        public ActionResult Index()
+        {
+            return View(db.tbl_Books.ToList());
+        }
+
+
+        // GET: /Books/
+        public ActionResult BookMap()
+        {
+            Debug.WriteLine("Before");
+            ViewBag.test = "Test";
+<<<<<<< HEAD
+            //Thread thready = new Thread(new ThreadStart(rfid.run));
+            //thready.Start();
+=======
+            Console.WriteLine("asd");
+>>>>>>> a72b6c2a2c27518195e8dd29c49c58e4c97342d4
+            DatabaseConnection dc = new DatabaseConnection();
+            List<List<String>> listOfBooks = new List<List<String>>();
+
+            listOfBooks = dc.getAllInBookShelf();
+            ViewBag.test = "count is: " + listOfBooks.Count;
+            ViewData["159699"] = "http://i.imgur.com/kdLyRnJ.png";
+            ViewData["shelf2"] = "http://i.imgur.com/kdLyRnJ.png";
+            ViewData["309428"] = "http://i.imgur.com/kdLyRnJ.png";
+
+
+            /*for (int i = 0; i < listOfBooks.Count; i++)
+            {
+
+                if (listOfBooks[i][0] == "The Bible")
+                {
+                    ViewBag.test = "listbook is: " + listOfBooks[i][0];
+                    ViewData["book"+(i+1)] = "";
+                }
+
+            }*/
+
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // GET: /Books/
+        public ActionResult BookMap(String bookString)
+        {
+            var books = from s in db.tbl_Books select s;
+            books = books.Where(s => s.Title.ToUpper().Contains(bookString));
+            ViewBag.test = "Starting";
+
+            ViewData["159699"] = "http://i.imgur.com/kdLyRnJ.png";
+            ViewData["shelf2"] = "http://i.imgur.com/kdLyRnJ.png";
+            ViewData["309428"] = "http://i.imgur.com/kdLyRnJ.png";
+
+            DatabaseConnection dc = new DatabaseConnection();
+            ViewBag.test = bookString;
+            if(!String.IsNullOrEmpty(bookString)){
+                List<String> bookList = dc.getBookByName(bookString);
+                if (bookList.Count != 0) {
+                    if (bookList[0] == "-1")
+                    {
+                        ViewBag.test = " Book is not in any shelf";
+                    }
+                    else
+                    {
+                        ViewData[bookList[0]] = "http://i.imgur.com/s0pnqRD.png"; 
+                    }
+                    
+                }
+                
+            }
+            
+
+            return View();
+        }
+
+
+        // GET: /Books/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            tbl_Books tbl_books = db.tbl_Books.Find(id);
+            if (tbl_books == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tbl_books);
+        }
+
+        // GET: /Books/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: /Books/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include="Id,Title,Author,CurrentShelf,CorrectShelf,TagId")] tbl_Books tbl_books)
+        {
+            if (ModelState.IsValid)
+            {
+                db.tbl_Books.Add(tbl_books);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(tbl_books);
+        }
+
+        // GET: /Books/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            tbl_Books tbl_books = db.tbl_Books.Find(id);
+            if (tbl_books == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tbl_books);
+        }
+
+        // POST: /Books/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include="Id,Title,Author,CurrentShelf,CorrectShelf,TagId")] tbl_Books tbl_books)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(tbl_books).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(tbl_books);
+        }
+
+        // GET: /Books/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            tbl_Books tbl_books = db.tbl_Books.Find(id);
+            if (tbl_books == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tbl_books);
+        }
+
+        // POST: /Books/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            tbl_Books tbl_books = db.tbl_Books.Find(id);
+            db.tbl_Books.Remove(tbl_books);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

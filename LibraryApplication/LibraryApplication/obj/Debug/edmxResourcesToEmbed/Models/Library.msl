@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="DatabaseModelStoreContainer" CdmEntityContainer="LibraryEntities">
+    <EntitySetMapping Name="tbl_Books">
+      <EntityTypeMapping TypeName="DatabaseModel.tbl_Books">
+        <MappingFragment StoreEntitySet="tbl_Books">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Author" ColumnName="Author" />
+          <ScalarProperty Name="CurrentShelf" ColumnName="CurrentShelf" />
+          <ScalarProperty Name="CorrectShelf" ColumnName="CorrectShelf" />
+          <ScalarProperty Name="TagId" ColumnName="TagId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_Borrowing">
+      <EntityTypeMapping TypeName="DatabaseModel.tbl_Borrowing">
+        <MappingFragment StoreEntitySet="tbl_Borrowing">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="BookTag" ColumnName="BookTag" />
+          <ScalarProperty Name="PersonTag" ColumnName="PersonTag" />
+          <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_Person">
+      <EntityTypeMapping TypeName="DatabaseModel.tbl_Person">
+        <MappingFragment StoreEntitySet="tbl_Person">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="PersonTagId" ColumnName="PersonTagId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
